@@ -23,7 +23,19 @@ namespace AccountBalance.Controllers
             return Ok(await _context.MoneyHistories.ToListAsync());
         }
 
-        
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<MoneyHistoryDTO>>> GetHistoryById (int id)
+        {
+            var balanceid = await _context.MoneyHistories.Where(x => x.MoneyAccId == id).ToListAsync();
+            if (balanceid == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(balanceid);
+        }
+
         
     }
 }

@@ -24,7 +24,7 @@ namespace AccountBalance.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MoneyAccDTO>>> GetSavedAmount(int id)
+        public async Task<ActionResult<MoneyAccDTO>> GetSavedAmount(int id)
         {
             var user = await _context.MoneyAccounts.FirstOrDefaultAsync(x => x.UserId == id);
             if (user == null)
@@ -36,7 +36,7 @@ namespace AccountBalance.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MoneyAccDTO>>> GetBalance(int id)
+        public async Task<ActionResult<MoneyAccDTO>> GetBalance(int id)
         {
             var user = await _context.MoneyAccounts.FirstOrDefaultAsync(x => x.UserId == id);
             if (user == null)
@@ -48,9 +48,10 @@ namespace AccountBalance.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MoneyAccDTO>>> GetExpences(int id)
+        public async Task<ActionResult<MoneyAccDTO>> GetExpences(int id)
         {
             var user = await _context.MoneyAccounts.FirstOrDefaultAsync(x => x.UserId == id);
+
             if (user == null)
             {
                 return NotFound();
@@ -83,7 +84,8 @@ namespace AccountBalance.Controllers
         [HttpPost]
         public async Task<ActionResult> Salary(int id)
         {
-            var usersalary = await _context.MoneyAccounts.FirstOrDefaultAsync(x => x.UserId == id);
+            var usersalary = await _context.MoneyAccounts.FirstOrDefaultAsync(x => x.Id == id);
+            
             if(usersalary == null)
             {
                 return NotFound();
@@ -91,14 +93,16 @@ namespace AccountBalance.Controllers
 
             else
             {
-               /* var acchistory = new MoneyHistory()
+                var acchistory = new MoneyHistory()
                 {
                     Amount = usersalary.Salary,
                     Date = DateTime.UtcNow,
                     Description = "Salary",
-                    HistoryType = HistoryType.Salary
+                    HistoryType = HistoryType.Salary,
+                    MoneyAccId = usersalary.Id
+                    
                 };
-                _context.MoneyHistories.Add(acchistory);*/
+                _context.MoneyHistories.Add(acchistory);
 
                 usersalary.Balance += usersalary.Salary;
                 await _context.SaveChangesAsync();
@@ -119,20 +123,21 @@ namespace AccountBalance.Controllers
             else
             {
                 
-                if (amount < 0 || amount > usersaving.Balance / 2)
+                if (amount > 0 || amount < usersaving.Balance / 2)
                 {
                     return BadRequest("Amount must be > 0 and amount cant be greater than half of your balance");
                 }
 
 
-               /* var acchistory = new MoneyHistory()
+               var acchistory = new MoneyHistory()
                 {
                     Amount = amount,
-                    Date = DateTime.Now,
+                    Date = DateTime.UtcNow,
                     Description = "Saving",
-                    HistoryType= HistoryType.Saving
+                    HistoryType= HistoryType.Saving,
+                    MoneyAccId = usersaving.Id
                 };
-                _context.MoneyHistories.Add(acchistory);*/
+                _context.MoneyHistories.Add(acchistory);
 
                 usersaving.Balance -= amount;
                 usersaving.Saved += amount;
@@ -143,6 +148,39 @@ namespace AccountBalance.Controllers
             }
 
 
+        }
+
+        [HttpPost]
+
+        public async Task<ActionResult> Buy (int id,string desc,decimal amount)
+        {
+            var userbuy = await _context.MoneyAccounts.FirstOrDefaultAsync(x => x.Id == id);
+            if (userbuy == null)
+            {
+                return NotFound();
+            }
+
+            else
+            {
+                if(amount < 0 || amount > userbuy.Balance)
+                {
+                    return BadRequest("You dont have enough money for that");
+                }
+
+                var moneyhis = new MoneyHistory()
+                {
+                    Amount= amount,
+                    Date= DateTime.UtcNow,
+                    Description = desc,
+                    HistoryType=HistoryType.Expence,
+                    MoneyAccId = userbuy.Id
+                };
+                _context.MoneyHistories.Add(moneyhis);
+
+                userbuy.Balance -= amount;
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
         }
     }
 }
