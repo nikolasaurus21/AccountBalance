@@ -152,6 +152,31 @@ namespace AccountBalance.Controllers
 
         [HttpPost]
 
+        public async Task<ActionResult> SavingsToBalance(int id, decimal amount)
+        {
+            var savingstobalance = await _context.MoneyAccounts.FirstOrDefaultAsync(x => x.Id == id);
+            if (savingstobalance == null)
+            {
+                return BadRequest();
+            }
+
+            else
+            {
+                if (amount < 0 || amount > savingstobalance.Saved)
+                {
+                    return BadRequest();
+                }
+
+                savingstobalance.Saved -= amount;
+                savingstobalance.Balance += amount;
+
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+        }
+
+        [HttpPost]
+
         public async Task<ActionResult> Buy (int id,string desc,decimal amount)
         {
             var userbuy = await _context.MoneyAccounts.FirstOrDefaultAsync(x => x.Id == id);
