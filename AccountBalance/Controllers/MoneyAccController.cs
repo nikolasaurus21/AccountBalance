@@ -178,6 +178,7 @@ namespace AccountBalance.Controllers
                 _context.MoneyHistories.Add(moneyhis);
 
                 userbuy.Balance -= amount;
+                userbuy.Expences += amount;
                 await _context.SaveChangesAsync();
                 return Ok();
             }
