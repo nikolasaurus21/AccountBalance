@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace AccountBalance.Migrations
 {
-    public partial class Relations : Migration
+    public partial class Database : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

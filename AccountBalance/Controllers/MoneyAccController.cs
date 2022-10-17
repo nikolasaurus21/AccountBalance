@@ -208,5 +208,20 @@ namespace AccountBalance.Controllers
                 return Ok();
             }
         }
+
+        [HttpDelete]
+
+        public async Task<ActionResult> DeleteAcc (int id)
+        {
+            var deleteacc = await _context.MoneyAccounts.FirstOrDefaultAsync(x => x.Id == id);
+            if(deleteacc == null)
+            {
+                return NotFound();
+            }
+
+            _context.MoneyAccounts.Remove(deleteacc);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
     }
 }

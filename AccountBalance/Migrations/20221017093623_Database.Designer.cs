@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AccountBalance.Migrations
 {
     [DbContext(typeof(AccountBalanceContext))]
-    [Migration("20220916074551_Relations")]
-    partial class Relations
+    [Migration("20221017093623_Database")]
+    partial class Database
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

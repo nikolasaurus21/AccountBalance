@@ -16,9 +16,8 @@ namespace AccountBalance.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            
             modelBuilder.Entity<User>()
-                .HasOne<MoneyAccount>(x => x.MoneyAccounts)
+                .HasOne(x => x.MoneyAccounts)
                 .WithOne(x => x.User)
                 .HasForeignKey<MoneyAccount>(x => x.UserId);
 

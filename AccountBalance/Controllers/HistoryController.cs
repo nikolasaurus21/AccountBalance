@@ -36,6 +36,19 @@ namespace AccountBalance.Controllers
             return Ok(balanceid);
         }
 
-        
+        [HttpDelete]
+
+        public async Task<ActionResult> DeleteHistory(int id)
+        {
+            var deletehis = await _context.MoneyHistories.FirstOrDefaultAsync(x => x.Id == id);
+            if(deletehis == null)
+            {
+                return NotFound();
+            }
+
+            _context.MoneyHistories.Remove(deletehis);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
     }
 }

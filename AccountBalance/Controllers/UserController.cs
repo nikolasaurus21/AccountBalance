@@ -39,7 +39,20 @@ namespace AccountBalance.Controllers
             return Ok();
         }
 
-       
+        [HttpDelete]
+
+        public async Task<ActionResult> DeleteUser(int id)
+        {
+            var deleteuser = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            if(deleteuser == null)
+            {
+                return NotFound();
+            }
+
+            _context.Users.Remove(deleteuser);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
         
     } 
     
